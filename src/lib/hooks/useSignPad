@@ -1,0 +1,60 @@
+import { useRef, useCallback, useState, useEffect } from 'react';
+
+export function useSignPad({ onSave, onClear } = {}) {
+  const ref = useRef(null);
+  const [isEmpty, setIsEmpty] = useState(true);
+
+  // Callback que se ejecutará cuando cambie el estado del SignPad
+  const handleChange = useCallback(() => {
+    if (ref.current) {
+      const empty = ref.current.isEmpty();
+      setIsEmpty(empty);
+    }
+  }, []);
+
+  // Verificar inicialmente cuando el componente se monte
+  useEffect(() => {
+    const checkState = () => {
+      if (ref.current) {
+        const empty = ref.current.isEmpty();
+        setIsEmpty(empty);
+      }
+    };
+
+    // Verificar después de un pequeño delay para asegurar que el componente esté montado
+    const timeoutId = setTimeout(checkState, 100);
+    
+    return () => clearTimeout(timeoutId);
+  }, []);
+
+
+
+  const clear = useCallback(() => {
+    ref.current?.clear();
+    setIsEmpty(true);
+    onClear?.();
+  }, [onClear]);
+
+  const undo = useCallback(() => {
+    ref.current?.undo();
+    // El onChange se encargará de actualizar el estado
+  }, []);
+
+  const save = useCallback((format = 'png', quality = 0.92) => ref.current?.save(format, quality), []);
+  const download = useCallback((filename = 'firma', format = 'png') => ref.current?.download(filename, format), []);
+  const toBlob = useCallback((format = 'png', quality = 0.92) => ref.current?.toBlob(format, quality), []);
+  const getSvg = useCallback(() => ref.current?.getSvg(), []);
+
+
+  return { 
+    ref, 
+    clear, 
+    undo, 
+    save, 
+    download, 
+    toBlob, 
+    isEmpty: isEmpty, // valor reactivo boolean
+    getSvg,
+    signPadProps: { ref, onSave, onClear, onChange: handleChange } 
+  };
+}

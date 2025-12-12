@@ -1,0 +1,71 @@
+{
+  "name": "signpad",
+  "version": "1.0.0",
+  "description": "Librería React headless para firmas digitales con trazos realistas usando perfect-freehand. Sin UI predefinida - 100% personalizable.",
+  "type": "module",
+  "main": "./dist/signpad.umd.js",
+  "module": "./dist/signpad.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/signpad.es.js",
+      "require": "./dist/signpad.umd.js"
+    },
+    "./signpad.css": "./dist/signpad.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "react",
+    "signature",
+    "sign",
+    "pad",
+    "canvas",
+    "svg",
+    "perfect-freehand",
+    "drawing",
+    "digital-signature",
+    "responsive",
+    "component",
+    "hook"
+  ],
+  "author": "Darel Masis",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tu-usuario/signpad.git"
+  },
+  "homepage": "https://github.com/tu-usuario/signpad#readme",
+  "bugs": {
+    "url": "https://github.com/tu-usuario/signpad/issues"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "dependencies": {
+    "perfect-freehand": "^1.2.2"
+  },
+  "devDependencies": {
+    "@darelmasis/devlogger": "^0.5.1",
+    "@eslint/js": "^9.39.1",
+    "@types/react": "^19.2.5",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react-swc": "^4.2.2",
+    "eslint": "^9.39.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "globals": "^16.5.0",
+    "prop-types": "^15.8.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "vite": "^7.2.4"
+  }
+}

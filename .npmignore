@@ -1,0 +1,27 @@
+# Source files (only publish dist)
+src/
+.gitignore
+.git
+
+# Development files
+vite.config.js
+eslint.config.js
+.vscode/
+.idea/
+
+# Documentation (optional, remove if you want to include)
+*.md
+!README.md
+
+# Tests
+*.test.js
+*.spec.js
+__tests__/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,143 @@
+.signpad-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.signpad-canvas {
+  display: block;
+  width: 100%;
+  touch-action: none;
+  border-radius: 4px;
+  background-color: #ffffff;
+}
+
+.signpad-disabled {
+  opacity: 0.6;
+  pointer-events: none;
+  cursor: not-allowed !important;
+}
+
+.signpad-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Prevenir scroll en móviles */
+  overflow: hidden;
+  touch-action: none;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.signpad-fullscreen:not(.signpad-rotated) .signpad-canvas {
+  width: calc(100vw - 40px);
+  height: calc(100vh - 40px);
+  border-radius: 8px;
+  /* Asegurar que el canvas ocupe el espacio con márgenes */
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Rotar el signpad cuando está en portrait en móviles para forzar landscape visual */
+.signpad-fullscreen.signpad-rotated {
+  /* Intercambiar dimensiones visualmente con márgenes de respeto (20px por lado = 40px total) */
+  width: calc(100vh - 40px) !important;
+  height: calc(100vw - 40px) !important;
+  /* Rotar 90 grados para que quede horizontal */
+  transform: rotate(90deg);
+  transform-origin: center center;
+  /* Centrar después de la rotación con márgenes */
+  top: 50%;
+  left: 50%;
+  margin-top: calc(-50vw + 20px);
+  margin-left: calc(-50vh + 20px);
+  /* Prevenir scroll */
+  overflow: hidden;
+  touch-action: none;
+  /* Bordes redondeados y sombra */
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  background-color: #ffffff;
+}
+
+.signpad-fullscreen.signpad-rotated .signpad-canvas {
+  width: 100% !important;
+  height: 100% !important;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 8px;
+}
+
+
+/* Ajustar el botón de salir para que esté en la posición correcta después de rotar */
+.signpad-fullscreen.signpad-rotated .signpad-exit-fullscreen {
+  /* Rotar el botón de vuelta para que se vea derecho */
+  transform: rotate(-90deg);
+  /* Después de rotar el contenedor 90deg, la esquina superior derecha visual 
+     está en la posición que antes era la esquina inferior derecha del contenedor.
+     Pero como el contenedor está centrado, necesitamos calcular la posición correcta.
+     La esquina superior derecha visual está en: top del contenedor + 10px, right del contenedor + 10px */
+  top: 10px;
+  right: 10px;
+  bottom: auto;
+  left: auto;
+  /* Asegurar que el botón esté visible */
+  z-index: 10001;
+  position: absolute;
+}
+
+.signpad-exit-fullscreen {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 48px;
+  height: 48px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  /* Asegurar que el botón siempre esté visible */
+  min-width: 48px;
+  min-height: 48px;
+  pointer-events: auto;
+}
+
+.signpad-exit-fullscreen:hover {
+  background: rgba(0, 0, 0, 0.9);
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: scale(1.1);
+}
+
+.signpad-exit-fullscreen:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+  .signpad-exit-fullscreen {
+    top: 10px;
+    right: 10px;
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
+  }
+}
