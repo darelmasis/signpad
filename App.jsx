@@ -5,63 +5,50 @@ import { SignPad } from './src/index.js';
 function App() {
   const signPadRef = useRef(null);
 
-  const handleSave = async () => {
-    const dataUrl = await signPadRef.current?.save('png');
-    if (dataUrl) {
-      console.log('Firma guardada:', dataUrl);
-    }
-  };
-
-  const handleClear = () => {
-    signPadRef.current?.clear();
-  };
-
-  const handleUndo = () => {
-    signPadRef.current?.undo();
-  };
-
-  const handleDownload = () => {
-    signPadRef.current?.download('mi-firma', 'png');
-  };
-
   return (
     <div style={{ 
-      maxWidth: '900px', 
-      margin: '2rem auto', 
-      padding: '0 1rem',
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+      maxWidth: '800px', 
+      margin: '0 auto', 
+      padding: '20px',
+      fontFamily: 'system-ui, -apple-system, sans-serif'
     }}>
-      {/* El SignPad */}
       <div style={{
-        border: '2px solid #ddd',
-        borderRadius: '8px',
-        overflow: 'hidden',
-        marginBottom: '1rem'
+        border: '1px solid #ddd',
+        borderRadius: '4px',
+        marginBottom: '15px'
       }}>
         <SignPad
           ref={signPadRef}
           height={300}
-          penSize={2.5}
-          penColor="#0066cc"
         />
       </div>
 
-      {/* Botones */}
-      <div style={{
-        display: 'flex',
-        gap: '0.75rem',
-        flexWrap: 'wrap'
-      }}>
-        <button onClick={handleClear} style={buttonStyle('#f44336')}>
+      <div style={{ display: 'flex', gap: '10px' }}>
+        <button 
+          onClick={() => signPadRef.current?.clear()}
+          style={styles.button}
+        >
           Limpiar
         </button>
-        <button onClick={handleUndo} style={buttonStyle('#ff9800')}>
+        <button 
+          onClick={() => signPadRef.current?.undo()}
+          style={styles.button}
+        >
           Deshacer
         </button>
-        <button onClick={handleSave} style={buttonStyle('#4caf50')}>
+        <button 
+          onClick={async () => {
+            const url = await signPadRef.current?.save('png');
+            if (url) console.log('Guardado:', url);
+          }}
+          style={styles.button}
+        >
           Guardar
         </button>
-        <button onClick={handleDownload} style={buttonStyle('#2196f3')}>
+        <button 
+          onClick={() => signPadRef.current?.download('firma', 'png')}
+          style={styles.button}
+        >
           Descargar
         </button>
       </div>
@@ -69,17 +56,16 @@ function App() {
   );
 }
 
-const buttonStyle = (color) => ({
-  padding: '0.75rem 1.5rem',
-  background: color,
-  color: 'white',
-  border: 'none',
-  borderRadius: '6px',
-  cursor: 'pointer',
-  fontWeight: '500',
-  fontSize: '1rem',
-  transition: 'all 0.2s'
-});
+const styles = {
+  button: {
+    padding: '8px 16px',
+    border: '1px solid #ddd',
+    borderRadius: '4px',
+    background: 'white',
+    cursor: 'pointer',
+    fontSize: '14px'
+  }
+};
 
 const root = createRoot(document.getElementById('root'));
 root.render(<App />);
