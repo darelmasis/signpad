@@ -2,9 +2,9 @@
 
 > Librería React headless para captura de firmas digitales con trazos realistas usando perfect-freehand.
 
-[![npm version](https://img.shields.io/npm/v/signpad.svg)](https://www.npmjs.com/package/signpad)
+[![npm version](https://img.shields.io/npm/v/@darelmasis/signpad.svg)](https://www.npmjs.com/package/@darelmasis/signpad)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Bundle Size](https://img.shields.io/bundlephobia/minzip/signpad)](https://bundlephobia.com/package/signpad)
+[![Bundle Size](https://img.shields.io/bundlephobia/minzip/@darelmasis/signpad)](https://bundlephobia.com/package/@darelmasis/signpad)
 
 ## Características
 
@@ -21,15 +21,15 @@
 ## Instalación
 
 ```bash
-npm install signpad
+npm install @darelmasis/signpad
 ```
 
 ## Uso Básico
 
 ```jsx
 import React, { useRef } from 'react';
-import { SignPad } from 'signpad';
-import 'signpad/signpad.css';
+import { SignPad } from '@darelmasis/signpad';
+import '@darelmasis/signpad/signpad.css';
 
 function App() {
   const signPadRef = useRef(null);
@@ -129,7 +129,7 @@ const svgElement = signPadRef.current?.getSvg();
 ### Con Hook `useSignPad` (Opcional)
 
 ```jsx
-import { SignPad, useSignPad } from 'signpad';
+import { SignPad, useSignPad } from '@darelmasis/signpad';
 
 function App() {
   const { signPadProps, clear, save, isEmpty } = useSignPad({

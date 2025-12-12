@@ -1,5 +1,5 @@
 {
-  "name": "signpad",
+  "name": "@darelmasis/signpad",
   "version": "1.0.0",
   "description": "Librería React headless para firmas digitales con trazos realistas usando perfect-freehand. Sin UI predefinida - 100% personalizable.",
   "type": "module",
@@ -15,6 +15,9 @@
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
@@ -40,11 +43,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tu-usuario/signpad.git"
+    "url": "git+https://github.com/darelmasis/signpad.git"
   },
-  "homepage": "https://github.com/tu-usuario/signpad#readme",
+  "homepage": "https://github.com/darelmasis/signpad#readme",
   "bugs": {
-    "url": "https://github.com/tu-usuario/signpad/issues"
+    "url": "https://github.com/darelmasis/signpad/issues"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
