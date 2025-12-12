@@ -1,4 +1,4 @@
-# 📝 SignPad
+# SignPad
 
 > Librería React headless para captura de firmas digitales con trazos realistas usando perfect-freehand.
 
@@ -6,25 +6,25 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Bundle Size](https://img.shields.io/bundlephobia/minzip/signpad)](https://bundlephobia.com/package/signpad)
 
-## ✨ Características
+## Características
 
-- ✍️ **Trazos Realistas** - Powered by `perfect-freehand`
-- 🎨 **Headless** - Sin UI predefinida, 100% personalizable
-- 📱 **Responsive** - Width 100% por defecto, adaptable
-- 🖼️ **Exportación Inteligente** - Solo guarda trazos, sin márgenes innecesarios
-- 🎯 **Alta Calidad** - Exportación 3x con anti-aliasing
-- 👆 **Touch Optimizado** - Soporte completo táctil con presión
-- ⚡ **Ultra Ligero** - Solo 2 kB gzipped
-- ♿ **Accesible** - ARIA labels incluidos
-- 🛠️ **API Simple** - Métodos vía ref
+- **Trazos Realistas** - Powered by `perfect-freehand`
+- **Headless** - Sin UI predefinida, 100% personalizable
+- **Responsive** - Width 100% por defecto, adaptable
+- **Exportación Inteligente** - Solo guarda trazos, sin márgenes innecesarios
+- **Alta Calidad** - Exportación 3x con anti-aliasing
+- **Touch Optimizado** - Soporte completo táctil con presión
+- **Ultra Ligero** - Solo 2 kB gzipped
+- **Accesible** - ARIA labels incluidos
+- **API Simple** - Métodos vía ref
 
-## 📦 Instalación
+## Instalación
 
 ```bash
 npm install signpad
 ```
 
-## 🚀 Uso Básico
+## Uso Básico
 
 ```jsx
 import React, { useRef } from 'react';
@@ -55,7 +55,7 @@ function App() {
 }
 ```
 
-## ⚙️ Props
+## Props
 
 | Prop | Tipo | Default | Descripción |
 |------|------|---------|-------------|
@@ -73,7 +73,7 @@ function App() {
 | `disabled` | `boolean` | `false` | Deshabilita interacción |
 | `className` | `string` | `''` | Clases CSS adicionales |
 
-## 🔧 Métodos (via ref)
+## Métodos (via ref)
 
 ### `clear()`
 Limpia completamente el canvas.
@@ -124,7 +124,7 @@ Obtiene el elemento SVG del DOM.
 const svgElement = signPadRef.current?.getSvg();
 ```
 
-## 🎯 Ejemplos
+## Ejemplos
 
 ### Con Hook `useSignPad` (Opcional)
 
@@ -223,7 +223,7 @@ const handleUpload = async () => {
 };
 ```
 
-## 🎨 Personalización
+## Personalización
 
 ### Colores y Grosor
 
@@ -265,7 +265,7 @@ const jpgUrl = await save('jpg', 0.95);
 const svgUrl = await save('svg');
 ```
 
-## 🏗️ Filosofía Headless
+## Filosofía Headless
 
 SignPad es una librería **headless** - proporciona la funcionalidad sin imponer diseños.
 
@@ -282,7 +282,7 @@ SignPad es una librería **headless** - proporciona la funcionalidad sin imponer
 - Exportación en alta calidad
 - Estilos CSS mínimos
 
-## 📊 Bundle Size
+## Bundle Size
 
 - **ES Module:** 44.50 kB
 - **Gzipped:** 2.01 kB (0.72 kB gzip)
@@ -290,7 +290,7 @@ SignPad es una librería **headless** - proporciona la funcionalidad sin imponer
 
 Ultra ligero y optimizado para producción.
 
-## 🤝 Contribuir
+## Contribuir
 
 Las contribuciones son bienvenidas:
 
@@ -300,11 +300,11 @@ Las contribuciones son bienvenidas:
 4. Push a la rama (`git push origin feature/amazing`)
 5. Abre un Pull Request
 
-## 📄 Licencia
+## Licencia
 
 MIT © [Darel Masis](https://github.com/darelmasis)
 
-## 🙏 Créditos
+## Créditos
 
 - [perfect-freehand](https://github.com/steveruizok/perfect-freehand) - Trazos realistas
 - [React](https://react.dev) - Framework base
