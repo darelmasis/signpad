@@ -21,15 +21,23 @@ export function getSvgPathFromStroke(stroke) {
  * Opciones default para perfect-freehand
  */
 
-export function getStrokeOptions({ penSize = 2, thinning = 0.5, smoothing = 0.5, streamline = 0.5 } = {}) {
+export function getStrokeOptions({ 
+  penSize = 2, 
+  thinning = 0.5, 
+  smoothing = 0.5, 
+  streamline = 0.5,
+  start = { taper: 0, easing: t => t, cap: true },
+  end = { taper: 0, easing: t => t, cap: true },
+  easing = t => t
+} = {}) {
   return {
     size: penSize,
     thinning,
     smoothing,
     streamline,
-    easing: t => t,
-    start: { taper: 0, easing: t => t, cap: true },
-    end: { taper: 0, easing: t => t, cap: true }
+    easing,
+    start: { easing, ...start },
+    end: { easing, ...end }
   };
 }
 

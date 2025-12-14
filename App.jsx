@@ -20,6 +20,8 @@ function App() {
         <SignPad
           ref={signPadRef}
           height={300}
+          penSize={5}
+
         />
       </div>
 
