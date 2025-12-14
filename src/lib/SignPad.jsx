@@ -12,6 +12,7 @@ const SignPadComponent = (props, ref) => {
   const {
     width, height, penColor, penSize,
     thinning, smoothing, streamline,
+    start, end, easing,
     backgroundColor, onSave, onClear, onChange, disabled, className, ...rest
   } = { ...DEFAULTS, ...props };
 
@@ -46,7 +47,7 @@ const SignPadComponent = (props, ref) => {
   const baseWidth = viewBoxDimensions.width;
   const baseHeight = viewBoxDimensions.height;
 
-  const strokeOptions = useMemo(() => getStrokeOptions({ penSize, thinning, smoothing, streamline }), [penSize, thinning, smoothing, streamline]);
+  const strokeOptions = useMemo(() => getStrokeOptions({ penSize, thinning, smoothing, streamline, start, end, easing }), [penSize, thinning, smoothing, streamline, start, end, easing]);
 
   const handlePointerDown = useCallback(e => {
     if (disabled) return;
@@ -127,7 +128,7 @@ const SignPadComponent = (props, ref) => {
       const paths = [...allStrokes, currentPoints]
         .filter(Boolean)
         .map((points) => {
-          const stroke = getStrokeOptions({ penSize, thinning, smoothing, streamline });
+          const stroke = getStrokeOptions({ penSize, thinning, smoothing, streamline, start, end, easing });
           const strokeData = getStroke(points, stroke);
           const pathData = getSvgPathFromStroke(strokeData);
           return `<path d="${pathData}" fill="${penColor}" stroke="none"/>`;
@@ -154,7 +155,7 @@ const SignPadComponent = (props, ref) => {
       console.error('SignPad: Error saving signature', error);
       return null;
     }
-  }, [allStrokes, currentPoints, backgroundColor, onSave, penSize, thinning, smoothing, streamline, penColor]);
+  }, [allStrokes, currentPoints, backgroundColor, onSave, penSize, thinning, smoothing, streamline, penColor, start, end, easing]);
 
   const download = useCallback(async (filename = 'firma', format = 'png') => {
     try {
@@ -235,8 +236,11 @@ const SignPadComponent = (props, ref) => {
   );
 };
 
+export const SignPad = React.forwardRef(SignPadComponent);
+SignPad.displayName = 'SignPad';
+
 // PropTypes para validación
-SignPadComponent.propTypes = {
+SignPad.propTypes = {
   width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   height: PropTypes.number,
   penColor: PropTypes.string,
@@ -244,6 +248,9 @@ SignPadComponent.propTypes = {
   thinning: PropTypes.number,
   smoothing: PropTypes.number,
   streamline: PropTypes.number,
+  start: PropTypes.object,
+  end: PropTypes.object,
+  easing: PropTypes.func,
   backgroundColor: PropTypes.string,
   onSave: PropTypes.func,
   onClear: PropTypes.func,
@@ -251,7 +258,4 @@ SignPadComponent.propTypes = {
   className: PropTypes.string,
   disabled: PropTypes.bool
 };
-
-export const SignPad = React.forwardRef(SignPadComponent);
-SignPad.displayName = 'SignPad';
 
