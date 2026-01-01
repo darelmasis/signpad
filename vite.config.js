@@ -4,11 +4,18 @@ import { resolve } from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
-  root: '.', // Raíz del proyecto
-  publicDir: false, // No usar publicDir para evitar conflictos
+  plugins: [
+    react({
+      jsxRuntime: 'classic' // Usar modo clásico para evitar inyectar el runtime automático en la librería
+    })
+  ],
+  root: '.',
+  publicDir: false,
+  define: {
+    'process.env.NODE_ENV': JSON.stringify('production') // Evitar fugas de process.env
+  },
   server: {
-    open: '/index.html' // Abrir el ejemplo automáticamente
+    open: '/index.html'
   },
   build: {
     lib: {
@@ -18,15 +25,19 @@ export default defineConfig({
       fileName: (format) => `signpad.${format}.js`
     },
     rollupOptions: {
-      // Externalize dependencies that shouldn't be bundled
-      external: ['react', 'react-dom'],
+      // Externalizar dependencias para que no se incluyan en el bundle
+      external: [
+        'react', 
+        'react-dom', 
+        'react/jsx-runtime',
+        'prop-types' // También externalizar prop-types para reducir tamaño
+      ],
       output: {
-        // Global variables to use in UMD build for externalized deps
         globals: {
           react: 'React',
-          'react-dom': 'ReactDOM'
+          'react-dom': 'ReactDOM',
+          'prop-types': 'PropTypes'
         },
-        // Preserve CSS
         assetFileNames: (assetInfo) => {
           if (assetInfo.name && assetInfo.name.endsWith('.css')) {
             return 'signpad.css';
@@ -36,9 +47,7 @@ export default defineConfig({
       }
     },
     sourcemap: true,
-    // Ensure build output is clean
     emptyOutDir: true,
-    // Enable minification
     minify: true
   }
 })
