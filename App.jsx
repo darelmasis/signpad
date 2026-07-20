@@ -183,16 +183,20 @@ function Firma() {
         <button onClick={() => signPadRef.current?.exitFullscreen()}>Fullscreen ■</button>
         <button onClick={() => signPadRef.current?.toggleFullscreen()}>Toggle FS</button>
         <button onClick={async () => setEmpty(signPadRef.current?.isEmpty() ?? true)}>
-          isEmpty: {empty ? 'true' : 'false'}
+          Ver isEmpty
         </button>
         <button onClick={() => setFsActive(signPadRef.current?.isFullscreen() ?? false)}>
-          isFullscreen: {fsActive ? 'true' : 'false'}
+          Ver Fullscreen
         </button>
         <button onClick={async () => {
           const blob = await signPadRef.current?.toBlob(format, 1.0);
           note(blob ? `toBlob: ${blob.size} bytes (${blob.type})` : 'toBlob: null');
         }}>toBlob</button>
       </div>
+
+      <p className="status">
+        Estado: {empty ? 'vacío' : 'con trazos'} · {fsActive ? 'fullscreen' : 'normal'}
+      </p>
 
       <button className="code-toggle" onClick={() => setShowCode(v => !v)}>
         {showCode ? 'Ocultar código' : 'Ver código usado'}
@@ -262,8 +266,8 @@ function Firma() {
         <button onClick={() => download('firma-hook', 'png')}>Descargar</button>
         <button onClick={undo}>Deshacer</button>
         <button onClick={clear}>Limpiar</button>
-        <button disabled={isEmpty}>isEmpty: {isEmpty ? 'true' : 'false'}</button>
-        <button onClick={toggleFullscreen}>Fullscreen {isFullscreen ? '■' : '▶'}</button>
+        <button disabled={isEmpty}>Vacío</button>
+        <button onClick={toggleFullscreen}>Pantalla completa</button>
         <button onClick={() => exitFullscreen()}>Salir FS</button>
         <button onClick={async () => {
           const blob = await toBlob('png', 1.0);
