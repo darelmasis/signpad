@@ -31,7 +31,7 @@ npm install @darelmasis/signpad
 ```jsx
 import React, { useRef } from 'react';
 import { SignPad } from '@darelmasis/signpad';
-import '@darelmasis/signpad/signpad.css';
+import '@darelmasis/signpad/signpad.css'; // opcional, ver abajo
 
 function App() {
   const signPadRef = useRef(null);
@@ -252,6 +252,36 @@ const handleUpload = async () => {
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
+```
+
+### ¿Hace falta importar el CSS? (opcional)
+
+**No es obligatorio.** La librería aplica los estilos críticos **inline** en el
+`<svg>`, así que funciona sin importar nada:
+
+- `touch-action: none` → el dibujo táctil no hace scroll de la página.
+- `backgroundColor` → el fondo se pinta aunque no importe el CSS.
+- `cursor` proporcional → va inline según `penSize`.
+- `width="100%"` por defecto → el SVG ocupa el contenedor.
+
+El archivo `signpad.css` solo añade lo **cosmético** y el modo fullscreen:
+
+| Clase / selector | Afecta a | Para qué sirve |
+|------------------|------------|-------------|
+| `.signpad-container` | `<div>` raíz | `display:flex`, `user-select:none`, `touch-action:none`. |
+| `.signpad-canvas` | `<svg>` | `border-radius:4px`, `background:#fff`, `display:block`. |
+| `.signpad-disabled` | `<svg>` | `opacity:0.6` y `pointer-events:none` cuando `disabled`. |
+| `.signpad-container:fullscreen` | contenedor en FS | Hace que el pad llene el viewport (100vw×100vh). |
+
+Si **no** importas el CSS y usas pantalla completa, añade tú lo mínimo:
+
+```css
+.signpad-container:fullscreen {
+  width: 100vw; height: 100vh;
+  background: #fff; display: flex;
+  align-items: center; justify-content: center;
+}
+.signpad-container:fullscreen .signpad-canvas { width: 100%; height: 100%; }
 ```
 
 ### Exportación en Diferentes Formatos
