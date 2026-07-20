@@ -36,8 +36,8 @@ export function getStrokeOptions({
     smoothing,
     streamline,
     easing,
-    start: { easing, ...start },
-    end: { easing, ...end }
+    start: { ...start, easing },
+    end: { ...end, easing }
   };
 }
 
