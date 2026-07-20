@@ -3,6 +3,24 @@ import { createRoot } from 'react-dom/client';
 import { SignPad, useSignPad } from './src/index.js';
 import './src/lib/SignPad.css';
 
+/* ----------------------------- Bloque de código ----------------------------- */
+function CodeBlock({ code }) {
+  const [copied, setCopied] = useState(false);
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch { /* noop */ }
+  };
+  return (
+    <div className="code-block">
+      <button className="code-copy" onClick={copy}>{copied ? '¡Copiado!' : 'Copiar'}</button>
+      <pre><code>{code}</code></pre>
+    </div>
+  );
+}
+
 /* ----------------------------- Demo con ref ----------------------------- */
 function RefDemo() {
   const signPadRef = useRef(null);
@@ -20,6 +38,46 @@ function RefDemo() {
   const [empty, setEmpty] = useState(true);
   const [fsActive, setFsActive] = useState(false);
   const [log, setLog] = useState('');
+  const [showCode, setShowCode] = useState(false);
+
+  const refCode = `import React, { useRef } from 'react';
+import { SignPad } from '@darelmasis/signpad';
+import '@darelmasis/signpad/signpad.css';
+
+function Firma() {
+  const ref = useRef(null);
+
+  const handleSave = async () => {
+    const url = await ref.current?.save('${format}');
+    console.log(url);
+  };
+
+  return (
+    <>
+      <SignPad
+        ref={ref}
+        height={300}
+        penColor="${penColor}"
+        penSize={${penSize}}
+        thinning={${thinning}}
+        smoothing={${smoothing}}
+        streamline={${streamline}}
+        backgroundColor="${backgroundColor}"
+        cursor="${cursor}"
+        lockLandscape={${lockLandscape ? 'true' : 'false'}}
+        onChange={() => console.log('cambió')}
+        onSave={(url, fmt) => console.log('guardado', fmt)}
+        onClear={() => console.log('limpió')}
+      />
+
+      <button onClick={() => ref.current?.clear()}>Limpiar</button>
+      <button onClick={handleSave}>Guardar (${format})</button>
+      <button onClick={() => ref.current?.download('firma', '${format}')}>Descargar</button>
+      <button onClick={() => ref.current?.undo()}>Deshacer</button>
+      <button onClick={() => ref.current?.enterFullscreen()}>Fullscreen</button>
+    </>
+  );
+}`;
 
   const note = (msg) => setLog(`${new Date().toLocaleTimeString()} - ${msg}`);
 
@@ -136,6 +194,11 @@ function RefDemo() {
         }}>toBlob</button>
       </div>
 
+      <button className="code-toggle" onClick={() => setShowCode(v => !v)}>
+        {showCode ? 'Ocultar código' : 'Ver código usado'}
+      </button>
+      {showCode && <CodeBlock code={refCode} />}
+
       {preview && (
         <div className="preview">
           <p>Vista previa ({format.toUpperCase()}):</p>
@@ -156,6 +219,30 @@ function HookDemo() {
   });
 
   const [preview, setPreview] = useState(null);
+  const [showCode, setShowCode] = useState(false);
+
+  const hookCode = `import React from 'react';
+import { SignPad, useSignPad } from '@darelmasis/signpad';
+import '@darelmasis/signpad/signpad.css';
+
+function Firma() {
+  const { signPadProps, clear, undo, save, download, isEmpty, isFullscreen, toggleFullscreen } = useSignPad({
+    onSave: (url, fmt) => console.log('guardado', fmt),
+    onClear: () => console.log('limpió'),
+  });
+
+  return (
+    <>
+      <SignPad {...signPadProps} height={220} penColor="#e91e63" penSize={6} />
+
+      <button onClick={() => save('png')} disabled={isEmpty}>Guardar</button>
+      <button onClick={() => download('firma', 'png')}>Descargar</button>
+      <button onClick={undo}>Deshacer</button>
+      <button onClick={clear} disabled={isEmpty}>Limpiar</button>
+      <button onClick={toggleFullscreen}>Fullscreen {isFullscreen ? '■' : '▶'}</button>
+    </>
+  );
+}`;
 
   const handleSave = async () => {
     const url = await save('png', 1.0);
@@ -183,6 +270,11 @@ function HookDemo() {
           if (blob) alert(`Blob: ${blob.size} bytes`);
         }}>toBlob</button>
       </div>
+
+      <button className="code-toggle" onClick={() => setShowCode(v => !v)}>
+        {showCode ? 'Ocultar código' : 'Ver código usado'}
+      </button>
+      {showCode && <CodeBlock code={hookCode} />}
 
       {preview && (
         <div className="preview">
