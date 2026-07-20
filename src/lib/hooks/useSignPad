@@ -1,14 +1,14 @@
 import { useRef, useCallback, useState, useEffect } from 'react';
 
-export function useSignPad({ onSave, onClear } = {}) {
+export function useSignPad({ onSave, onClear, cursor, lockLandscape } = {}) {
   const ref = useRef(null);
   const [isEmpty, setIsEmpty] = useState(true);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Callback que se ejecutará cuando cambie el estado del SignPad
   const handleChange = useCallback(() => {
     if (ref.current) {
-      const empty = ref.current.isEmpty();
-      setIsEmpty(empty);
+      setIsEmpty(ref.current.isEmpty());
     }
   }, []);
 
@@ -23,11 +23,18 @@ export function useSignPad({ onSave, onClear } = {}) {
 
     // Verificar después de un pequeño delay para asegurar que el componente esté montado
     const timeoutId = setTimeout(checkState, 100);
-    
+
     return () => clearTimeout(timeoutId);
   }, []);
 
-
+  // Sincronizar estado de pantalla completa
+  useEffect(() => {
+    const onFsChange = () => {
+      if (ref.current) setIsFullscreen(ref.current.isFullscreen());
+    };
+    document.addEventListener('fullscreenchange', onFsChange);
+    return () => document.removeEventListener('fullscreenchange', onFsChange);
+  }, []);
 
   const clear = useCallback(() => {
     ref.current?.clear();
@@ -40,21 +47,31 @@ export function useSignPad({ onSave, onClear } = {}) {
     // El onChange se encargará de actualizar el estado
   }, []);
 
-  const save = useCallback((format = 'png', quality = 0.92) => ref.current?.save(format, quality), []);
+  const save = useCallback((format = 'png', quality = 1.0) => ref.current?.save(format, quality), []);
   const download = useCallback((filename = 'firma', format = 'png') => ref.current?.download(filename, format), []);
   const toBlob = useCallback((format = 'png', quality = 0.92) => ref.current?.toBlob(format, quality), []);
   const getSvg = useCallback(() => ref.current?.getSvg(), []);
+  const enterFullscreen = useCallback(() => ref.current?.enterFullscreen(), []);
+  const exitFullscreen = useCallback(() => ref.current?.exitFullscreen(), []);
+  const toggleFullscreen = useCallback(() => ref.current?.toggleFullscreen(), []);
 
+  const signPadProps = { ref, onSave, onClear, onChange: handleChange };
+  if (cursor !== undefined) signPadProps.cursor = cursor;
+  if (lockLandscape !== undefined) signPadProps.lockLandscape = lockLandscape;
 
-  return { 
-    ref, 
-    clear, 
-    undo, 
-    save, 
-    download, 
-    toBlob, 
-    isEmpty: isEmpty, // valor reactivo boolean
+  return {
+    ref,
+    clear,
+    undo,
+    save,
+    download,
+    toBlob,
     getSvg,
-    signPadProps: { ref, onSave, onClear, onChange: handleChange } 
+    enterFullscreen,
+    exitFullscreen,
+    toggleFullscreen,
+    isEmpty, // valor reactivo boolean
+    isFullscreen, // valor reactivo boolean
+    signPadProps
   };
 }

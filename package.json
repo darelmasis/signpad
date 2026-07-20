@@ -1,14 +1,14 @@
 {
   "name": "@darelmasis/signpad",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "Librería React headless para firmas digitales con trazos realistas usando perfect-freehand. Sin UI predefinida - 100% personalizable.",
   "type": "module",
   "main": "./dist/signpad.umd.js",
   "module": "./dist/signpad.es.js",
-  "types": "./src/index.d.ts",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./src/index.d.ts",
+      "types": "./dist/index.d.ts",
       "import": "./dist/signpad.es.js",
       "require": "./dist/signpad.umd.js"
     },
@@ -22,7 +22,7 @@
   },
   "scripts": {
     "dev": "vite --host",
-    "build": "vite build",
+    "build": "vite build && node scripts/copy-types.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "prepublishOnly": "npm run build"

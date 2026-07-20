@@ -14,9 +14,11 @@
 - **Exportación Inteligente** - Solo guarda trazos, sin márgenes innecesarios
 - **Alta Calidad** - Exportación 3x con anti-aliasing
 - **Touch Optimizado** - Soporte completo táctil con presión
-- **Ultra Ligero** - Solo 2 kB gzipped
+- **Cursor Proporcional** - El cursor refleja el grosor del trazo
+- **Pantalla Completa** - Modo fullscreen con bloqueo landscape en móviles
+- **Ultra Ligero** - ~6.4 kB gzipped
 - **Accesible** - ARIA labels incluidos
-- **API Simple** - Métodos vía ref
+- **API Simple** - Métodos vía ref o hook `useSignPad`
 
 ## Instalación
 
@@ -62,7 +64,7 @@ function App() {
 | `width` | `string\|number` | `'100%'` | Ancho del canvas |
 | `height` | `number` | `300` | Alto en píxeles |
 | `penColor` | `string` | `'#0004a6'` | Color del trazo |
-| `penSize` | `number` | `2` | Tamaño base del trazo (1-20) |
+| `penSize` | `number` | `4` | Tamaño base del trazo (1-20) |
 | `thinning` | `number` | `0.5` | Adelgazamiento por velocidad (0-1) |
 | `smoothing` | `number` | `0.5` | Suavizado de curvas (0-1) |
 | `streamline` | `number` | `0.5` | Estabilización del trazo (0-1) |
@@ -284,9 +286,9 @@ SignPad es una librería **headless** - proporciona la funcionalidad sin imponer
 
 ## Bundle Size
 
-- **ES Module:** 44.50 kB
-- **Gzipped:** 2.01 kB (0.72 kB gzip)
-- **CSS:** 2.01 kB
+- **ES Module:** 15.32 kB
+- **Gzipped:** 5.60 kB
+- **CSS:** 0.32 kB
 
 Ultra ligero y optimizado para producción.
 

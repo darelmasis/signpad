@@ -32,6 +32,8 @@ export interface SignPadProps extends React.HTMLAttributes<HTMLDivElement> {
   onChange?: () => void;
   disabled?: boolean;
   className?: string;
+  cursor?: 'proportional' | 'crosshair' | 'none' | string;
+  lockLandscape?: boolean;
 }
 
 export interface SignPadMethods {
@@ -42,6 +44,10 @@ export interface SignPadMethods {
   toBlob: (format?: 'png' | 'jpg' | 'jpeg' | 'svg', quality?: number) => Promise<Blob | null>;
   isEmpty: () => boolean;
   getSvg: () => SVGSVGElement | null;
+  enterFullscreen: () => Promise<void>;
+  exitFullscreen: () => Promise<void>;
+  toggleFullscreen: () => Promise<void>;
+  isFullscreen: () => boolean;
 }
 
 export const SignPad: React.ForwardRefExoticComponent<SignPadProps & React.RefAttributes<SignPadMethods>>;
@@ -55,6 +61,10 @@ export function useSignPad(options?: UseSignPadOptions): {
   save: (format?: 'png' | 'jpg' | 'jpeg' | 'svg', quality?: number) => Promise<string | null>;
   download: (filename?: string, format?: 'png' | 'jpg' | 'jpeg' | 'svg') => Promise<void>;
   toBlob: (format?: 'png' | 'jpg' | 'jpeg' | 'svg', quality?: number) => Promise<Blob | null>;
-  isEmpty: boolean;
   getSvg: () => SVGSVGElement | null;
+  enterFullscreen: () => Promise<void>;
+  exitFullscreen: () => Promise<void>;
+  toggleFullscreen: () => Promise<void>;
+  isEmpty: boolean;
+  isFullscreen: boolean;
 };

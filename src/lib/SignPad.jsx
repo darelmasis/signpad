@@ -1,9 +1,11 @@
-import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useRef, useState, useCallback, useMemo, useEffect } from 'react';
 import { getStrokeOptions, renderStroke, getSvgPathFromStroke } from './utils/stroke.jsx';
 import { getStroke } from 'perfect-freehand';
 import { getPointerPosition } from './utils/pointer';
 import { svgToBase64, svgToDataURL } from './utils/export';
 import { calculateBoundingBox } from './utils/boundingBox';
+import { getCursorStyle } from './utils/cursor';
+import { lockOrientationToLandscape, unlockOrientation } from './utils/orientation';
 import { DEFAULTS } from './constants';
 import PropTypes from 'prop-types';
 import './SignPad.css';
@@ -13,7 +15,9 @@ const SignPadComponent = (props, ref) => {
     width, height, penColor, penSize,
     thinning, smoothing, streamline,
     start, end, easing,
-    backgroundColor, onSave, onClear, onChange, disabled, className, ...rest
+    backgroundColor, onSave, onClear, onChange, disabled, className,
+    cursor, lockLandscape,
+    ...rest
   } = { ...DEFAULTS, ...props };
 
   const svgRef = useRef(null);
@@ -28,7 +32,7 @@ const SignPadComponent = (props, ref) => {
     const initHeight = height || 300;
     return { width: initWidth, height: initHeight };
   });
-  
+
   // Callback ref para inicializar viewBox cuando el contenedor se monte
   const setContainerRef = useCallback((node) => {
     containerRef.current = node;
@@ -39,20 +43,31 @@ const SignPadComponent = (props, ref) => {
       viewBoxInitialized.current = true;
     }
   }, [width, height]);
-  
+
   // El viewBox se mantiene constante para que los trazos se escalen correctamente
   // Solo se inicializa una vez cuando el contenedor se monta
-  
+
   // Dimensiones base del viewBox
   const baseWidth = viewBoxDimensions.width;
   const baseHeight = viewBoxDimensions.height;
 
   const strokeOptions = useMemo(() => getStrokeOptions({ penSize, thinning, smoothing, streamline, start, end, easing }), [penSize, thinning, smoothing, streamline, start, end, easing]);
 
+  // Cursor del SVG (proporcional al grosor o personalizado)
+  const cursorStyle = useMemo(() => {
+    if (disabled) return 'not-allowed';
+    if (cursor === 'proportional') return getCursorStyle(penSize, thinning, false);
+    if (cursor === 'crosshair') return 'crosshair';
+    if (cursor === 'none') return 'none';
+    return cursor || 'default';
+  }, [cursor, penSize, thinning, disabled]);
+
   const handlePointerDown = useCallback(e => {
     if (disabled) return;
     e.preventDefault();
     setIsDrawing(true);
+    // Capturar el puntero para seguir dibujando aunque salga del área del pad
+    try { svgRef.current?.setPointerCapture(e.pointerId); } catch { /* noop */ }
     const point = getPointerPosition(e, svgRef.current);
     if (point) {
       setCurrentPoints([[point.x, point.y, point.pressure]]);
@@ -70,9 +85,10 @@ const SignPadComponent = (props, ref) => {
     if (point) setCurrentPoints(prev => [...prev, [point.x, point.y, point.pressure]]);
   }, [isDrawing, disabled]);
 
-  const handlePointerUp = useCallback(() => {
+  const handlePointerUp = useCallback(e => {
     if (!isDrawing) return;
     setIsDrawing(false);
+    try { svgRef.current?.releasePointerCapture(e.pointerId); } catch { /* noop */ }
     if (currentPoints.length > 0) {
       setAllStrokes(prev => [...prev, currentPoints]);
       setCurrentPoints([]);
@@ -81,27 +97,54 @@ const SignPadComponent = (props, ref) => {
     }
   }, [isDrawing, currentPoints, onChange]);
 
-  // Event listeners globales para dibujo continuo fuera del pad
+  // ---- Pantalla completa (fullscreen) ----
   useEffect(() => {
-    if (!isDrawing) return;
-
-    const handleGlobalMouseMove = (e) => handlePointerMove(e);
-    const handleGlobalMouseUp = () => handlePointerUp();
-
-    document.addEventListener('mousemove', handleGlobalMouseMove);
-    document.addEventListener('mouseup', handleGlobalMouseUp);
-
-    return () => {
-      document.removeEventListener('mousemove', handleGlobalMouseMove);
-      document.removeEventListener('mouseup', handleGlobalMouseUp);
+    const onFsChange = () => {
+      const active = document.fullscreenElement === containerRef.current;
+      if (active) {
+        // Bloquear scroll del body mientras está en fullscreen
+        document.body.style.overflow = 'hidden';
+        // Forzar orientación horizontal en móviles (mejor para firmar)
+        if (lockLandscape) lockOrientationToLandscape();
+      } else {
+        document.body.style.overflow = '';
+        unlockOrientation();
+      }
     };
-  }, [isDrawing, handlePointerMove, handlePointerUp]);
+    document.addEventListener('fullscreenchange', onFsChange);
+    return () => document.removeEventListener('fullscreenchange', onFsChange);
+  }, [lockLandscape]);
 
-  const clear = useCallback(() => { 
-    setAllStrokes([]); 
+  const enterFullscreen = useCallback(async () => {
+    try {
+      if (containerRef.current?.requestFullscreen) {
+        await containerRef.current.requestFullscreen();
+      }
+    } catch (error) {
+      console.warn('SignPad: No se pudo entrar a pantalla completa', error);
+    }
+  }, []);
+
+  const exitFullscreen = useCallback(async () => {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+    } catch (error) {
+      console.warn('SignPad: No se pudo salir de pantalla completa', error);
+    }
+  }, []);
+
+  const toggleFullscreen = useCallback(async () => {
+    if (document.fullscreenElement === containerRef.current) await exitFullscreen();
+    else await enterFullscreen();
+  }, [enterFullscreen, exitFullscreen]);
+
+  const isFullscreen = useCallback(() => document.fullscreenElement === containerRef.current, []);
+
+  const clear = useCallback(() => {
+    setAllStrokes([]);
     setCurrentPoints([]);
     if (onChange) onChange();
-    if (onClear) onClear(); 
+    if (onClear) onClear();
   }, [onClear, onChange]);
 
   const undo = useCallback(() => {
@@ -115,7 +158,7 @@ const SignPadComponent = (props, ref) => {
       // Verificar si está vacío antes de guardar
       const currentIsEmpty = allStrokes.length === 0 && currentPoints.length === 0;
       if (currentIsEmpty) return null;
-      
+
       const svg = svgRef.current;
       if (!svg) return null;
 
@@ -124,38 +167,34 @@ const SignPadComponent = (props, ref) => {
       if (!bbox || bbox.width <= 0 || bbox.height <= 0) return null;
 
       // Crear un nuevo SVG solo con el área de los trazos
-      // Usar transform para mover el contenido al origen
       const paths = [...allStrokes, currentPoints]
         .filter(Boolean)
         .map((points) => {
-          const stroke = getStrokeOptions({ penSize, thinning, smoothing, streamline, start, end, easing });
-          const strokeData = getStroke(points, stroke);
+          const strokeData = getStroke(points, strokeOptions);
           const pathData = getSvgPathFromStroke(strokeData);
           return `<path d="${pathData}" fill="${penColor}" stroke="none"/>`;
         })
         .join('');
 
-      // Crear SVG recortado usando viewBox y transform para recortar
-      // El viewBox define el área visible y el transform mueve el contenido
+      // Crear SVG recortado usando viewBox para recortar al área dibujada
       const croppedSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="${bbox.width}" height="${bbox.height}" viewBox="${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}">${paths}</svg>`;
-      
-      // Para PNG: no pasar backgroundColor (será transparente)
-      // Para JPG: pasar backgroundColor ya que JPG no soporta transparencia
+
+      // Para PNG: fondo transparente; para JPG: fondo (JPG no soporta transparencia)
       const bgColor = format === 'jpg' || format === 'jpeg' ? backgroundColor : null;
-      
-      // Usar calidad máxima (1.0) y escala 3x para mejor calidad
-      const scale = 3; // Escala para mejor calidad
-      const dataUrl = format === 'svg' 
-        ? svgToBase64(croppedSvg) 
+
+      // Escala 3x para mayor calidad / anti-aliasing
+      const scale = 3;
+      const dataUrl = format === 'svg'
+        ? svgToBase64(croppedSvg)
         : await svgToDataURL(croppedSvg, bbox.width * scale, bbox.height * scale, bgColor, format, quality, scale);
-      
+
       if (onSave) onSave(dataUrl, format);
       return dataUrl;
     } catch (error) {
       console.error('SignPad: Error saving signature', error);
       return null;
     }
-  }, [allStrokes, currentPoints, backgroundColor, onSave, penSize, thinning, smoothing, streamline, penColor, start, end, easing]);
+  }, [allStrokes, currentPoints, backgroundColor, onSave, penColor, strokeOptions]);
 
   const download = useCallback(async (filename = 'firma', format = 'png') => {
     try {
@@ -182,36 +221,36 @@ const SignPadComponent = (props, ref) => {
     }
   }, [save]);
 
-
-
-  React.useImperativeHandle(ref, () => ({ 
-    clear, 
-    undo, 
-    save, 
-    download, 
+  React.useImperativeHandle(ref, () => ({
+    clear,
+    undo,
+    save,
+    download,
     toBlob,
-    isEmpty: () => allStrokes.length === 0 && currentPoints.length === 0, 
-    getSvg
-  }), [clear, undo, save, download, toBlob, allStrokes, currentPoints, getSvg]);
+    getSvg,
+    isEmpty: () => allStrokes.length === 0 && currentPoints.length === 0,
+    enterFullscreen,
+    exitFullscreen,
+    toggleFullscreen,
+    isFullscreen
+  }), [clear, undo, save, download, toBlob, allStrokes, currentPoints, getSvg, enterFullscreen, exitFullscreen, toggleFullscreen, isFullscreen]);
 
   // Dimensiones del SVG
   const svgWidth = typeof width === 'string' ? '100%' : width;
   const svgHeight = height;
-  
+
   // ViewBox se mantiene constante con las dimensiones iniciales
-  // Esto permite que los trazos se escalen correctamente cuando cambia el tamaño del SVG
   const viewBox = `0 0 ${baseWidth} ${baseHeight}`;
 
   // Construir className
   const containerClassName = ['signpad-container', className].filter(Boolean).join(' ');
 
   return (
-    <div 
+    <div
       ref={setContainerRef}
       className={containerClassName}
       {...rest}
     >
-
       <svg
         ref={svgRef}
         xmlns="http://www.w3.org/2000/svg"
@@ -220,13 +259,11 @@ const SignPadComponent = (props, ref) => {
         viewBox={viewBox}
         preserveAspectRatio="xMidYMid meet"
         className={`signpad-canvas ${disabled ? 'signpad-disabled' : ''}`}
-        style={{ backgroundColor, touchAction: 'none', cursor: disabled ? 'not-allowed' : 'default' }}
-        onMouseDown={handlePointerDown}
-        onMouseMove={handlePointerMove}
-        onMouseUp={handlePointerUp}
-        onTouchStart={handlePointerDown}
-        onTouchMove={handlePointerMove}
-        onTouchEnd={handlePointerUp}
+        style={{ backgroundColor, touchAction: 'none', cursor: cursorStyle }}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerLeave={handlePointerUp}
         role="img"
         aria-label="Área de firma digital"
       >
@@ -256,6 +293,7 @@ SignPad.propTypes = {
   onClear: PropTypes.func,
   onChange: PropTypes.func,
   className: PropTypes.string,
-  disabled: PropTypes.bool
+  disabled: PropTypes.bool,
+  cursor: PropTypes.oneOfType([PropTypes.string]),
+  lockLandscape: PropTypes.bool
 };
-

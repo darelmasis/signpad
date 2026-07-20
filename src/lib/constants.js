@@ -15,5 +15,7 @@ export const DEFAULTS = {
   penColor: '#0004a6',
   backgroundColor: '#ffffff',
   width: '100%',
-  height: 300
+  height: 300,
+  cursor: 'proportional',
+  lockLandscape: true
 };

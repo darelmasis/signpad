@@ -5,21 +5,30 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.1.0] - 2026-07-20
+
+### ✨ Añadido
+- **Cursor proporcional**: prop `cursor` (`'proportional' | 'crosshair' | 'none' | string`) que refleja el grosor del trazo.
+- **Pantalla completa**: métodos `enterFullscreen()`, `exitFullscreen()`, `toggleFullscreen()` e `isFullscreen()` vía ref y hook.
+- **Bloqueo landscape**: prop `lockLandscape` que fuerza orientación horizontal en móviles al entrar en fullscreen (Chrome/Android).
+- **Scroll lock**: se oculta el scroll del body durante el fullscreen.
+- **Hook `useSignPad`** ahora expone `enterFullscreen`, `exitFullscreen`, `toggleFullscreen` e `isFullscreen` (reactivo).
+- Tipos TypeScript publicados en `dist/index.d.ts`.
+
+### 🐛 Corregido
+- Doble registro de puntos al dibujar (ahora Pointer Events + `setPointerCapture`).
+- `easing` prop ignorado en las puntas del trazo.
+- UMD sin global para `react/jsx-runtime`.
+- Defaults de `quality` unificados entre componente y hook.
+
 ## [0.2.0] - 2025-11-30
 
 ### ✨ Añadido
 - **Exportación Inteligente**: Solo guarda los trazos sin fondo innecesario usando bounding box
 - **Alta Calidad**: Exportación 3x con anti-aliasing para imágenes ultra-nítidas
-- **Modo Fullscreen**: Pantalla completa optimizada para móviles con rotación automática
-- **Rotación Landscape**: Fuerza orientación horizontal en móviles portrait
 - **Hook `useSignPad`**: API alternativa basada en hooks con estado reactivo
-- **Cursor Proporcional**: El cursor se ajusta dinámicamente al `penSize`
 - **ViewBox Dinámico**: Escalado correcto en diferentes tamaños de pantalla
 - **Callbacks `onChange`**: Notificación en tiempo real de cambios en el canvas
-- **Método `isFullscreen()`**: Verifica el estado de pantalla completa
-- **Métodos fullscreen**: `enterFullscreen()`, `exitFullscreen()`, `toggleFullscreen()`
-- **Salida con ESC**: Tecla Escape para salir de fullscreen
-- **Bloqueo de Scroll**: Previene scroll del body en fullscreen móvil
 
 ### 🎨 Mejorado
 - **Calidad de Exportación**: PNG con fondo transparente, JPG con fondo blanco

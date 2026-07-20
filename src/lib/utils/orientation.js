@@ -69,4 +69,3 @@ export async function unlockOrientation() {
     return false;
   }
 }
-

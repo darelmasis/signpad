@@ -73,13 +73,134 @@
       font-family: 'Courier New', monospace;
       font-size: 0.85rem;
     }
+
+    .card {
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .card h2 {
+      font-size: 1.1rem;
+      margin-bottom: 0.75rem;
+      color: #111;
+    }
+
+    .card h2 code,
+    .subtitle code {
+      background: #eef2ff;
+      color: #4338ca;
+      padding: 0.1rem 0.35rem;
+      border-radius: 4px;
+    }
+
+    .pad-wrap {
+      border: 2px dashed #cbd5e1;
+      border-radius: 8px;
+      padding: 4px;
+      background: #fff;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .control {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      font-size: 0.85rem;
+      color: #374151;
+    }
+
+    .control input[type="range"] {
+      width: 100%;
+    }
+
+    .control input[type="color"] {
+      width: 48px;
+      height: 32px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      padding: 0;
+      background: none;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      align-items: center;
+    }
+
+    .toolbar select {
+      padding: 0.45rem 0.6rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 0.85rem;
+    }
+
+    .toolbar button {
+      padding: 0.45rem 0.9rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      background: #fff;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .toolbar button:hover:not(:disabled) {
+      background: #f3f4f6;
+      border-color: #9ca3af;
+    }
+
+    .toolbar button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .preview {
+      margin-top: 1rem;
+      padding: 0.75rem;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+    }
+
+    .preview p {
+      font-size: 0.8rem;
+      color: #6b7280;
+      margin-bottom: 0.5rem;
+    }
+
+    .preview img {
+      max-width: 100%;
+      background:
+        linear-gradient(45deg, #e5e7eb 25%, transparent 25%),
+        linear-gradient(-45deg, #e5e7eb 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #e5e7eb 75%),
+        linear-gradient(-45deg, transparent 75%, #e5e7eb 75%);
+      background-size: 16px 16px;
+      background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+      border-radius: 4px;
+    }
+
+    .log {
+      margin-top: 0.75rem;
+      font-size: 0.8rem;
+      color: #059669;
+      font-family: 'Courier New', monospace;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>SignPad Demo</h1>
-    
-    
     <div id="root"></div>
   </div>
 
